@@ -1,0 +1,71 @@
+.App {
+  text-align: center;
+  background-color: #f4f6f9;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.cursor {
+  cursor: pointer !important ;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.g-8 {
+  gap: 8px;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.h-100 {
+  height: 100vh;
+}
+
+.outline-none {
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 15px;
+  background-color: #ffffff;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #f4f6f9;
+  border-radius: 15px;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.events-none {
+  pointer-events: none !important;
+}
