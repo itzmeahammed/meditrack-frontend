@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, CircularProgress } from "@mui/material";
-import { FaFileUpload, FaCamera } from "react-icons/fa"; // File and Camera icons
+import { FaFileUpload, FaCamera } from "react-icons/fa";
 
 const PrescriptionAnalyzer = () => {
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState("");
   const [selectedFile, setSelectedFile] = useState("");
+  const [medicines, setMedicines] = useState([]);
 
   const handleUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       setFileName(file.name);
       setSelectedFile(file);
-      console.log("Uploaded prescription:", file);
     }
   };
 
@@ -25,7 +25,7 @@ const PrescriptionAnalyzer = () => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("file", selectedFile); // not filename, real file
+    formData.append("file", selectedFile);
 
     fetch("http://localhost:6778/prescription/analyze_prescription", {
       method: "POST",
@@ -33,10 +33,17 @@ const PrescriptionAnalyzer = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        alert(`Medicines Found:\n${data.medicines}`);
+        try {
+          const parsed = JSON.parse(data.medicines);
+          console.log(parsed);
+          console.log(data);
+          setMedicines(parsed);
+        } catch (error) {
+          console.error("Error parsing medicines:", error);
+        }
         setLoading(false);
       })
-      .catch((error) => {
+      .catch(() => {
         alert("Error analyzing prescription.");
         setLoading(false);
       });
@@ -52,7 +59,7 @@ const PrescriptionAnalyzer = () => {
       }}
     >
       <Typography
-        variant='h4'
+        variant="h4"
         sx={{
           fontWeight: "bold",
           mb: 3,
@@ -64,30 +71,28 @@ const PrescriptionAnalyzer = () => {
         Prescription Analyzer
       </Typography>
 
+      {/* File Upload */}
       <Box sx={{ textAlign: "center", mb: 3 }}>
-        {/* File Upload Section */}
         <input
-          type='file'
-          accept='image/*'
+          type="file"
+          accept="image/*"
           onChange={handleUpload}
-          id='upload-prescription'
+          id="upload-prescription"
           style={{ display: "none" }}
         />
-        <label htmlFor='upload-prescription'>
+        <label htmlFor="upload-prescription">
           <Button
-            variant='outlined'
+            variant="outlined"
             sx={{
               bgcolor: "#fff",
               color: "#4caf50",
               borderColor: "#4caf50",
               padding: "10px 20px",
               fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "#e8f5e9",
-              },
+              "&:hover": { backgroundColor: "#e8f5e9" },
               marginBottom: "20px",
             }}
-            component='span'
+            component="span"
             startIcon={<FaFileUpload />}
           >
             Upload Prescription
@@ -95,10 +100,10 @@ const PrescriptionAnalyzer = () => {
         </label>
         {fileName && (
           <Typography
-            variant='body2'
+            variant="body2"
             sx={{ fontStyle: "italic", color: "#4caf50" }}
           >
-            {`Uploaded File: ${fileName}`}
+            Uploaded File: {fileName}
           </Typography>
         )}
       </Box>
@@ -106,7 +111,7 @@ const PrescriptionAnalyzer = () => {
       {/* Analyze Button */}
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Button
-          variant='contained'
+          variant="contained"
           onClick={handleAnalyze}
           sx={{
             bgcolor: "#4caf50",
@@ -114,9 +119,7 @@ const PrescriptionAnalyzer = () => {
             padding: "10px 20px",
             fontWeight: "bold",
             width: "250px",
-            "&:hover": {
-              backgroundColor: "#388e3c",
-            },
+            "&:hover": { backgroundColor: "#388e3c" },
           }}
           startIcon={
             loading ? (
@@ -130,6 +133,32 @@ const PrescriptionAnalyzer = () => {
           {loading ? "Analyzing..." : "Analyze Prescription"}
         </Button>
       </Box>
+
+      {/* Medicines List */}
+      {medicines.length > 0 && (
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+            Medicines Found
+          </Typography>
+          {medicines.map((med, idx) => (
+            <Box
+              key={idx}
+              sx={{
+                bgcolor: "#fff",
+                p: 2,
+                mb: 2,
+                borderRadius: "8px",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Typography variant="h6" color="primary">{med.name}</Typography>
+              <Typography variant="body2" sx={{ color: "#555" }}>
+                {med.use}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+      )}
     </Box>
   );
 };
